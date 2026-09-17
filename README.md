@@ -1,0 +1,86 @@
+# Sistema Estatístico - Tabelas e Gráficos de Frequência
+
+Bem-vindos ao repositório do nosso projeto de Estatística! Este sistema recebe dados quantitativos, processa cálculos estatísticos rigorosos e gera tabelas de frequência (absoluta, relativa e acumuladas) e gráficos interativos.
+
+---
+
+## Arquitetura do Projeto
+
+Nosso projeto segue o padrão `src/`, separando regras de negócio da interface. Isso evita conflitos e facilita testes.
+
+    projeto-estatistica/
+    ├── .github/          # Configurações do repositório
+    ├── tests/            # Onde ficam nossos testes automatizados (pytest)
+    └── src/              # Código fonte principal da aplicação
+        ├── models/       # Estruturas de dados (dataclasses)
+        ├── services/     # Motor estatístico (cálculo de fi, fr, classes, etc.)
+        ├── validators/   # Regras de validação (dados corretos, etc.)
+        ├── charts/       # Funções geradoras de gráficos (Plotly)
+        └── ui/           # Interface do usuário (Streamlit)
+            └── app.py    # Ponto de entrada para rodar o site
+
+---
+
+## 🛠️ Configurando o Ambiente de Desenvolvimento
+
+Para evitar o clássico problema "na minha máquina funciona", **todos devem rodar o projeto usando um Ambiente Virtual (venv)**. Siga o passo a passo:
+
+### 1. Clonar o repositório
+    git clone <COLOQUE_A_URL_DO_GITHUB_AQUI>
+    cd tabelas-frequencia
+
+### 2. Criar o Ambiente Virtual
+Dentro da pasta do projeto, crie o ambiente isolado:
+* **No Windows (PowerShell/CMD):**
+   python -m venv .venv
+
+* **No Mac/Linux:**
+   python3 -m venv .venv
+
+### 3. Ativar o Ambiente Virtual
+Você precisa ativar o `venv` **toda vez** que for trabalhar no projeto.
+
+* **No Windows (PowerShell/CMD):**
+    .venv\Scripts\activate
+
+* **No Mac/Linux:**
+    source .venv/bin/activate
+
+*(Se ativou corretamente, aparecerá `(venv)` no início da linha do seu terminal).*
+
+### 4. Instalar Dependências
+Com o ambiente ativado, instale as bibliotecas que usaremos (Pandas, Streamlit, Plotly, etc.):
+    pip install -r requirements.txt
+
+---
+
+## 🚀 Como Rodar o Sistema
+
+Sempre com o `venv` ativado, execute o Streamlit apontando para o arquivo principal:
+    
+    streamlit run src/ui/app.py
+
+Uma aba do navegador abrirá automaticamente com o sistema rodando.
+
+---
+
+## 🌿 Regras de Contribuição e Git (Como vamos trabalhar)
+
+Para não sobrescrevermos o código uns dos outros, usaremos um fluxo baseado em **Pull Requests**.
+
+1. **A branch `main` é sagrada:** Ninguém faz `git commit` ou `git push` direto na `main`. Ela deve ter sempre o código funcionando.
+2. **Crie uma branch para sua tarefa:** Vai criar um botão? Consertar um cálculo? Crie uma branch a partir da `main`.
+   * **Padrão de nome:** `tipo/nome-da-tarefa`
+   * *Exemplos:* `feat/calculo-classes`, `fix/erro-divisao-zero`, `docs/atualiza-readme`
+   * *Comando:* `git checkout -b feat/minha-tarefa`
+3. **Faça os Commits:** Trabalhe na sua branch, faça os commits do seu progresso.
+4. **Abra um Pull Request (PR):** Quando terminar, mande sua branch para o GitHub (`git push origin feat/minha-tarefa`) e abra um PR lá no site.
+5. **Code Review:** Avise a equipe. Alguém vai ler seu código, aprovar e fazer o *Merge* para a `main`.
+
+---
+
+## 🧪 Rodando os Testes
+
+Para garantir que os cálculos matemáticos não quebrem no futuro, rode nossos testes automatizados com o comando:
+    
+    pytest
