@@ -9,15 +9,27 @@ Bem-vindos ao repositório do nosso projeto de Estatística! Este sistema recebe
 Nosso projeto segue o padrão `src/`, separando regras de negócio da interface. Isso evita conflitos e facilita testes.
 
     projeto-estatistica/
-    ├── .github/          # Configurações do repositório
-    ├── tests/            # Onde ficam nossos testes automatizados (pytest)
-    └── src/              # Código fonte principal da aplicação
-        ├── models/       # Estruturas de dados (dataclasses)
-        ├── services/     # Motor estatístico (cálculo de fi, fr, classes, etc.)
-        ├── validators/   # Regras de validação (dados corretos, etc.)
-        ├── charts/       # Funções geradoras de gráficos (Plotly)
-        └── ui/           # Interface do usuário (Streamlit)
-            └── app.py    # Ponto de entrada para rodar o site
+    ├── .github/                    # Configurações do repositório
+    ├── app.py                      # Ponto de entrada para rodar o site (Streamlit)
+    ├── tests/                      # Testes automatizados (pytest)
+    │   ├── test_classes.py         # Testes de cálculo de classes
+    │   ├── test_frequency.py       # Testes de tabelas de frequência
+    │   └── test_validation.py      # Testes de validação de dados
+    └── src/                        # Código fonte principal da aplicação
+        ├── enums/                  # Enums de domínio
+        │   └── enums.py            # TypeValues (contínuo, discreto)
+        ├── parsers/                 # Processamento e parsing dos dados de entrada
+        │   └── data_parser.py      # DataParser: split, limpeza e conversão dos dados
+        ├── validators/              # Regras de validação (dados corretos, etc.)
+        │   └── data_validator.py   # Validação dos dados recebidos
+        ├── models/                  # Estruturas de dados
+        │   └── dataset.py          # Dataset: dataclass com values e type_values
+        ├── services/                 # Motor estatístico (cálculo de fi, fr, classes, etc.)
+        │   ├── class_service.py    # Cálculo de classes (em construção)
+        │   └── frequency_service.py # Cálculo das tabelas de frequência (em construção)
+        ├── charts/                  # Funções geradoras de gráficos (Plotly)
+        │   └── chart_service.py    # ChartService: geração dos gráficos interativos
+        └── ui/                      # Componentes de interface do usuário (Streamlit)
 
 ---
 
@@ -56,9 +68,11 @@ Com o ambiente ativado, instale as bibliotecas que usaremos (Pandas, Streamlit, 
 
 ## 🚀 Como Rodar o Sistema
 
-Sempre com o `venv` ativado, execute o Streamlit apontando para o arquivo principal:
+Sempre com o `venv` ativado, execute o Streamlit apontando para o arquivo principal, na raiz do projeto:
     
-    streamlit run src/ui/app.py
+    streamlit run app.py
+
+> ⚠️ **Nota:** o `app.py` ainda está em construção — a interface completa será implementada em breve.
 
 Uma aba do navegador abrirá automaticamente com o sistema rodando.
 
