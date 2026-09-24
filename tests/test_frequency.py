@@ -44,15 +44,38 @@ def test_frequencia_continua_calcula_por_classe(service):
         values=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
         type_values=TypeValues.CONTINUOUS,
     )
+
     classes = [(1, 4), (4, 7), (7, 10), (10, 13)]
 
     distribuicao = service.calculate(dataset, classes=classes)
 
     assert distribuicao.total == 12
-    assert [row.value for row in distribuicao.rows] == [2.5, 5.5, 8.5, 11.5]
-    assert [row.absolute_frequency for row in distribuicao.rows] == [3, 3, 3, 3]
-    assert distribuicao.rows[-1].cumulative_frequency == 12
 
+    assert [row.midpoint for row in distribuicao.rows] == [
+        2.5,
+        5.5,
+        8.5,
+        11.5,
+    ]
+
+    assert [
+        (row.lower_bound, row.upper_bound)
+        for row in distribuicao.rows
+    ] == [
+        (1, 4),
+        (4, 7),
+        (7, 10),
+        (10, 13),
+    ]
+
+    assert [row.absolute_frequency for row in distribuicao.rows] == [
+        3,
+        3,
+        3,
+        3,
+    ]
+
+    assert distribuicao.rows[-1].cumulative_frequency == 12
 
 def test_frequencia_continua_inclui_limite_superior_apenas_na_ultima_classe(service):
     dataset = Dataset(values=[1, 4, 7], type_values=TypeValues.CONTINUOUS)
