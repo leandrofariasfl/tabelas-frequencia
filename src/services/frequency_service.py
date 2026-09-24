@@ -1,4 +1,5 @@
 from src.enums.enums import TypeValues
+from src.models.class_interval import ClassInterval
 from src.models.dataset import Dataset
 from src.models.frequency import (
     ContinuousFrequencyRow,
@@ -12,7 +13,7 @@ class FrequencyService:
     def calculate(
         self,
         dataset: Dataset,
-        classes: list[tuple[float, float]] | None = None,
+        classes: list[ClassInterval] | None = None,
     ) -> FrequencyDistribution:
 
         if dataset.type_values == TypeValues.DISCRETE:
@@ -61,7 +62,7 @@ class FrequencyService:
     def _calculate_continuous(
         self,
         values: list[int | float],
-        classes: list[tuple[float, float]] | None,
+        classes: list[ClassInterval] | None,
     ) -> FrequencyDistribution:
 
         if not classes:
@@ -74,14 +75,13 @@ class FrequencyService:
         total = len(values)
         cumulative_frequency = 0
 
-        for index, (lower_bound, upper_bound) in enumerate(classes):
-
+        for index, interval in enumerate(classes):
             is_last_class = index == len(classes) - 1
 
             absolute_frequency = self._count_in_class(
                 values,
-                lower_bound,
-                upper_bound,
+                interval.lower_bound,
+                interval.upper_bound,
                 is_last_class,
             )
 
@@ -90,13 +90,11 @@ class FrequencyService:
             relative_frequency = absolute_frequency / total
             cumulative_relative_frequency = cumulative_frequency / total
 
-            midpoint = (lower_bound + upper_bound) / 2
-
             rows.append(
                 ContinuousFrequencyRow(
-                    lower_bound=lower_bound,
-                    upper_bound=upper_bound,
-                    midpoint=midpoint,
+                    lower_bound=interval.lower_bound,
+                    upper_bound=interval.upper_bound,
+                    midpoint=interval.midpoint,
                     absolute_frequency=absolute_frequency,
                     cumulative_frequency=cumulative_frequency,
                     relative_frequency=relative_frequency,
