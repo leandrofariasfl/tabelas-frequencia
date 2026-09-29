@@ -898,20 +898,6 @@ Essas funcionalidades não fazem parte do escopo atual.
 
 ---
 
-## 👥 Equipe
-
-Projeto desenvolvido em grupo para atividade acadêmica.
-
-Integrantes:
-
-- Nome do integrante 1
-- Nome do integrante 2
-- Nome do integrante 3
-- Nome do integrante 4
-- Nome do integrante 5
-
----
-
 ## 📚 Contexto acadêmico
 
 Projeto desenvolvido para aplicação prática dos conceitos de:
