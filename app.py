@@ -7,15 +7,9 @@ from src.parsers.data_parser import DataParser
 from src.services.distribution_service import DistributionService
 from src.ui.components.table import create_frequency_dataframe
 from src.validators.data_validator import DataValidator
-from src.validators.type_consistency_checker import TypeConsistencyChecker
 
 
-def main():
-    st.set_page_config(
-        page_title="Tabelas de Frequência",
-        layout="wide",
-    )
-
+def render_header():
     st.title("Tabelas de Frequência e Gráficos")
 
     st.write(
@@ -23,6 +17,8 @@ def main():
         "para gerar a distribuição de frequência."
     )
 
+
+def render_input():
     input_data = st.text_area(
         "Dados (ex: 12, 15, 18.5, 20, 25)",
         "",
@@ -33,139 +29,137 @@ def main():
         ("Discreta", "Contínua"),
     )
 
-    with st.expander("Como escolher o tipo da variável?"):
-        st.markdown(
-            """
-            **Variável discreta**
+    st.caption(
+        "Discreta: valores contáveis ou pertencentes a um conjunto "
+        "específico. Contínua: valores normalmente obtidos por medição."
+    )
 
-            Representa valores contáveis ou pertencentes a um conjunto
-            específico de possibilidades.
+    process_button = st.button("Processar Dados")
 
-            Exemplos:
-            - número de filhos;
-            - quantidade de faltas;
-            - número de defeitos;
-            - valores definidos em uma escala.
+    return input_data, variable_type, process_button
 
-            **Variável contínua**
 
-            Representa valores obtidos por medição e que, em princípio,
-            podem assumir qualquer valor dentro de um intervalo.
+def get_type_value(variable_type: str) -> TypeValues:
+    if variable_type == "Discreta":
+        return TypeValues.DISCRETE
 
-            Exemplos:
-            - altura;
-            - peso;
-            - temperatura;
-            - tempo.
+    return TypeValues.CONTINUOUS
 
-            **Importante:** possuir casas decimais não significa,
-            necessariamente, que uma variável seja contínua.
-            """
+
+def process_data(
+    input_data: str,
+    type_value: TypeValues,
+):
+    parser = DataParser()
+    validator = DataValidator()
+    distribution_service = DistributionService()
+
+    parsed_data = parser.parse(input_data)
+
+    validator.validate(
+        parsed_data,
+        type_value,
+    )
+
+    dataset = Dataset(
+        values=parsed_data,
+        type_values=type_value,
+    )
+
+    return distribution_service.calculate(dataset)
+
+
+def render_results(
+    distribution,
+    type_value: TypeValues,
+):
+    st.success("Dados processados com sucesso!")
+
+    st.subheader("Tabela de Frequência")
+
+    dataframe = create_frequency_dataframe(
+        distribution,
+        type_value,
+    )
+
+    st.dataframe(
+        dataframe,
+        use_container_width=True,
+    )
+
+    st.subheader("Gráficos")
+
+    chart_service = ChartService()
+
+    if type_value == TypeValues.DISCRETE:
+        figure = chart_service.build_discrete_chart(
+            distribution
         )
 
-    if st.button("Processar Dados"):
-        if not input_data.strip():
-            st.warning(
-                "Por favor, insira os dados para processamento."
-            )
-            return
-
-        type_val = (
-            TypeValues.DISCRETE
-            if variable_type == "Discreta"
-            else TypeValues.CONTINUOUS
+        st.plotly_chart(
+            figure,
+            use_container_width=True,
         )
 
-        parser = DataParser()
-        validator = DataValidator()
-        consistency_checker = TypeConsistencyChecker()
-        distribution_service = DistributionService()
-        chart_service = ChartService()
+        return
 
-        try:
-            parsed_data = parser.parse(input_data)
+    col1, col2 = st.columns(2)
 
-            validator.validate(
-                parsed_data,
-                type_val,
-            )
+    with col1:
+        histogram = chart_service.build_histogram(
+            distribution
+        )
 
-            consistency_result = consistency_checker.analyze(
-                parsed_data,
-                type_val,
-            )
+        st.plotly_chart(
+            histogram,
+            use_container_width=True,
+        )
 
-            if consistency_result:
-                level, message = consistency_result
+    with col2:
+        polygon = chart_service.build_frequency_polygon(
+            distribution
+        )
 
-                if level == "warning":
-                    st.warning(message)
+        st.plotly_chart(
+            polygon,
+            use_container_width=True,
+        )
 
-                elif level == "info":
-                    st.info(message)
 
-            dataset = Dataset(
-                values=parsed_data,
-                type_values=type_val,
-            )
+def main():
+    st.set_page_config(
+        page_title="Tabelas de Frequência",
+        layout="wide",
+    )
 
-            distribution = distribution_service.calculate(
-                dataset
-            )
+    render_header()
 
-            st.success("Dados processados com sucesso!")
+    input_data, variable_type, process_button = render_input()
 
-            st.subheader("Tabela de Frequência")
+    if not process_button:
+        return
 
-            dataframe = create_frequency_dataframe(
-                distribution,
-                type_val,
-            )
+    if not input_data.strip():
+        st.warning(
+            "Por favor, insira os dados para processamento."
+        )
+        return
 
-            st.dataframe(
-                dataframe,
-                use_container_width=True,
-            )
+    type_value = get_type_value(variable_type)
 
-            st.subheader("Gráficos")
+    try:
+        distribution = process_data(
+            input_data,
+            type_value,
+        )
 
-            if type_val == TypeValues.DISCRETE:
-                figure = chart_service.build_discrete_chart(
-                    distribution
-                )
+        render_results(
+            distribution,
+            type_value,
+        )
 
-                st.plotly_chart(
-                    figure,
-                    use_container_width=True,
-                )
-
-            else:
-                col1, col2 = st.columns(2)
-
-                with col1:
-                    histogram = chart_service.build_histogram(
-                        distribution
-                    )
-
-                    st.plotly_chart(
-                        histogram,
-                        use_container_width=True,
-                    )
-
-                with col2:
-                    polygon = (
-                        chart_service.build_frequency_polygon(
-                            distribution
-                        )
-                    )
-
-                    st.plotly_chart(
-                        polygon,
-                        use_container_width=True,
-                    )
-
-        except ValueError as error:
-            st.error(f"Erro de validação: {error}")
+    except ValueError as error:
+        st.error(f"Erro de validação: {error}")
 
 
 if __name__ == "__main__":
