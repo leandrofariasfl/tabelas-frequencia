@@ -15,16 +15,28 @@ class ChartService:
         return fig
 
     def build_histogram(self, distribution):
-        x = [f"[{row.lower_bound}, {row.upper_bound})" for row in distribution.rows]
+        x = []
+        last_index = len(distribution.rows) - 1
+
+        for index, row in enumerate(distribution.rows):
+            if index == last_index:
+                interval = f"[{row.lower_bound}, {row.upper_bound}]"
+            else:
+                interval = f"[{row.lower_bound}, {row.upper_bound})"
+
+            x.append(interval)
+
         y = [row.absolute_frequency for row in distribution.rows]
 
         fig = go.Figure(data=[go.Bar(x=x, y=y)])
+
         fig.update_layout(
             title="Histograma",
             xaxis_title="Classes",
             yaxis_title="Frequência",
             bargap=0,
         )
+
         return fig
 
     def build_frequency_polygon(self, distribution):
