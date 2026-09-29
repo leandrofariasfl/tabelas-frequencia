@@ -2,14 +2,14 @@
 
 Aplicação desenvolvida em **Python com Streamlit** para construção automática de tabelas de frequência e gráficos para dados quantitativos discretos e contínuos.
 
-O projeto foi desenvolvido como atividade acadêmica, com foco não apenas no funcionamento da aplicação, mas também em:
+O projeto foi desenvolvido como atividade acadêmica, com foco em:
 
+- aplicação prática de conceitos estatísticos;
 - organização do código;
 - separação de responsabilidades;
-- boas práticas de desenvolvimento;
 - testes automatizados;
-- trabalho colaborativo com Git e GitHub;
-- aplicação dos conceitos estatísticos de distribuição de frequência.
+- desenvolvimento colaborativo com Git e GitHub;
+- construção de uma interface simples para exploração de distribuições de frequência.
 
 ---
 
@@ -20,7 +20,7 @@ Permitir que o usuário informe uma sequência de dados quantitativos e escolha 
 - **Discreta**
 - **Contínua**
 
-A aplicação realiza automaticamente o processamento dos dados, gera a tabela de distribuição de frequência correspondente e apresenta os gráficos adequados para cada tipo de variável.
+A aplicação processa os dados, gera automaticamente a distribuição de frequência correspondente e apresenta os gráficos adequados para cada tipo de variável.
 
 ---
 
@@ -79,7 +79,7 @@ Exemplo de entrada:
 
 ---
 
-## 📐 Regras estatísticas utilizadas
+## 📐 Conceitos estatísticos utilizados
 
 ### Frequência absoluta
 
@@ -109,7 +109,11 @@ A frequência relativa indica a proporção de observações pertencentes a dete
 fr = fi / N
 ```
 
-Onde `N` representa o número total de observações.
+Onde:
+
+```text
+N = número total de observações
+```
 
 ---
 
@@ -119,7 +123,7 @@ Onde `N` representa o número total de observações.
 Fr = Fi / N
 ```
 
-Na aplicação, os valores são armazenados internamente como proporções e formatados como porcentagens na camada de apresentação.
+Internamente, os valores são armazenados como proporções e convertidos para porcentagem na camada de apresentação.
 
 ---
 
@@ -134,7 +138,7 @@ k = 1 + 3.322 × log10(n)
 Onde:
 
 - `k` = quantidade de classes;
-- `n` = quantidade de observações.
+- `n` = número de observações.
 
 O resultado é arredondado para o inteiro mais próximo.
 
@@ -144,7 +148,7 @@ A amplitude total é calculada por:
 A = valor máximo - valor mínimo
 ```
 
-A largura de cada classe é calculada por:
+A largura das classes é calculada por:
 
 ```text
 h = A / k
@@ -162,8 +166,8 @@ As classes intermediárias seguem a convenção:
 
 Ou seja:
 
-- limite inferior incluído;
-- limite superior excluído.
+- o limite inferior pertence à classe;
+- o limite superior não pertence à classe.
 
 A última classe inclui também o limite superior:
 
@@ -171,7 +175,29 @@ A última classe inclui também o limite superior:
 [limite inferior, limite superior]
 ```
 
-Isso garante que o maior valor do conjunto de dados pertença à distribuição.
+Isso garante que o maior valor do conjunto seja incluído na distribuição.
+
+---
+
+## 🔎 Escolha do tipo da variável
+
+A classificação entre variável discreta e contínua depende da **natureza da variável**, e não apenas da forma como os números são escritos.
+
+De maneira geral:
+
+- **Discreta:** representa valores contáveis ou pertencentes a um conjunto específico de possibilidades.
+- **Contínua:** representa valores normalmente obtidos por medição e que podem assumir diferentes valores dentro de um intervalo.
+
+Exemplos:
+
+| Tipo | Exemplos |
+|---|---|
+| Discreta | número de filhos, quantidade de faltas, número de defeitos |
+| Contínua | altura, peso, temperatura, tempo |
+
+> A presença de casas decimais, isoladamente, não significa que uma variável seja contínua.
+
+Por esse motivo, a aplicação solicita que o usuário informe o tipo da variável antes do processamento.
 
 ---
 
@@ -188,7 +214,7 @@ Para dados discretos é utilizado um **gráfico de barras**.
 
 ### Variável contínua
 
-Para dados contínuos são utilizados dois gráficos.
+Para dados contínuos são utilizados:
 
 #### Histograma
 
@@ -215,7 +241,7 @@ O usuário pode:
 3. solicitar o processamento;
 4. visualizar a tabela de frequência;
 5. visualizar os gráficos;
-6. receber mensagens de erro para entradas inválidas.
+6. receber mensagens amigáveis para entradas inválidas.
 
 Os valores devem ser separados por vírgula.
 
@@ -225,13 +251,13 @@ Exemplo:
 10, 15, 20, 25, 30
 ```
 
-Para casas decimais, deve ser utilizado ponto:
+Para valores decimais, deve ser utilizado ponto:
 
 ```text
 10.5, 12.7, 15.2
 ```
 
-A vírgula é reservada para separar as observações.
+A vírgula é utilizada como separador entre as observações.
 
 ---
 
@@ -247,11 +273,11 @@ O projeto utiliza:
 
 ### Python
 
-Responsável por toda a lógica da aplicação.
+Responsável pela lógica principal da aplicação.
 
 ### Streamlit
 
-Utilizado para construção da interface web.
+Utilizado na construção da interface web.
 
 ### Pandas
 
@@ -259,17 +285,17 @@ Utilizado na camada de apresentação para criação das tabelas exibidas ao usu
 
 ### Plotly
 
-Utilizado para geração dos gráficos interativos.
+Utilizado para criação dos gráficos interativos.
 
 ### pytest
 
-Utilizado para testes automatizados das principais regras do sistema.
+Utilizado para testes automatizados das principais regras da aplicação.
 
 ---
 
 ## 🏗️ Arquitetura
 
-O projeto foi desenvolvido buscando separar as responsabilidades entre diferentes módulos.
+O projeto foi estruturado buscando separar claramente as responsabilidades entre os módulos.
 
 Fluxo principal:
 
@@ -357,18 +383,32 @@ tabelas-frequencia/
 
 ### `app.py`
 
-Ponto de entrada da aplicação Streamlit.
+É o ponto de entrada da aplicação Streamlit.
 
-Responsável por:
+A função `main()` atua principalmente como orquestradora do fluxo da interface.
 
-- receber a entrada do usuário;
-- selecionar o tipo da variável;
-- iniciar o fluxo de processamento;
-- exibir tabela;
-- exibir gráficos;
-- apresentar mensagens de validação.
+Para evitar concentrar todas as responsabilidades em uma única função, o arquivo foi dividido em funções auxiliares:
 
-As regras estatísticas não ficam concentradas nesse arquivo.
+```text
+main()
+│
+├── render_header()
+├── render_input()
+├── get_type_value()
+├── process_data()
+└── render_results()
+```
+
+Responsabilidades:
+
+- `render_header()` → apresenta o título e a descrição da aplicação;
+- `render_input()` → recebe os dados e o tipo da variável;
+- `get_type_value()` → converte a opção selecionada para `TypeValues`;
+- `process_data()` → conecta Parser, Validator, Dataset e serviços;
+- `render_results()` → apresenta tabela e gráficos;
+- `main()` → coordena o fluxo geral da aplicação.
+
+As regras estatísticas continuam isoladas nos serviços.
 
 ---
 
@@ -388,7 +428,10 @@ Exemplo:
 [12, 15, 18.5]
 ```
 
-Também identifica entradas malformadas, como campos vazios ou valores que não representam números.
+Também identifica problemas de entrada, como:
+
+- campos vazios;
+- valores que não representam números.
 
 ---
 
@@ -400,9 +443,11 @@ Entre as validações estão:
 
 - conjunto de dados vazio;
 - valores não numéricos;
-- compatibilidade com o tipo da variável.
+- tipo de variável inválido.
 
-Para dados discretos, os valores devem representar números inteiros.
+A aplicação não determina se uma variável é discreta ou contínua apenas pela presença de valores inteiros ou decimais.
+
+O tipo da variável é informado pelo usuário de acordo com a natureza estatística dos dados.
 
 ---
 
@@ -416,6 +461,19 @@ Contém:
 values
 type_values
 ```
+
+---
+
+### `TypeValues`
+
+Enum utilizado para representar os dois tipos de variável suportados:
+
+```text
+DISCRETE
+CONTINUOUS
+```
+
+Evita o uso de strings soltas ao longo da aplicação.
 
 ---
 
@@ -435,12 +493,12 @@ midpoint
 
 ### `ClassService`
 
-Responsável por construir automaticamente as classes dos dados contínuos.
+Responsável pela criação automática das classes para dados contínuos.
 
 Realiza:
 
-- cálculo do mínimo;
-- cálculo do máximo;
+- identificação do menor valor;
+- identificação do maior valor;
 - cálculo da amplitude;
 - cálculo da quantidade de classes;
 - cálculo da largura das classes;
@@ -464,11 +522,15 @@ Fr
 
 para distribuições discretas e contínuas.
 
+Para variáveis discretas, as frequências são calculadas por valor.
+
+Para variáveis contínuas, as frequências são calculadas por classe.
+
 ---
 
 ### `DistributionService`
 
-Atua como serviço de orquestração.
+Atua como serviço de orquestração do processamento estatístico.
 
 Para dados discretos:
 
@@ -488,13 +550,13 @@ ClassService
 FrequencyService
 ```
 
-Isso evita que a interface precise conhecer detalhes do processamento estatístico.
+Isso evita que a interface conheça detalhes da lógica estatística.
 
 ---
 
 ### `FrequencyRow`
 
-Representa uma linha de frequência de dados discretos.
+Representa uma linha da distribuição de frequência para dados discretos.
 
 Contém:
 
@@ -510,7 +572,7 @@ cumulative_relative_frequency
 
 ### `ContinuousFrequencyRow`
 
-Representa uma linha de distribuição contínua.
+Representa uma linha da distribuição para dados contínuos.
 
 Contém:
 
@@ -528,7 +590,7 @@ cumulative_relative_frequency
 
 ### `FrequencyDistribution`
 
-Representa o resultado final de uma distribuição de frequência.
+Representa o resultado final da distribuição de frequência.
 
 Contém:
 
@@ -549,15 +611,51 @@ Disponibiliza:
 - histograma;
 - polígono de frequência.
 
-A camada de gráficos recebe resultados já processados e não recalcula frequências.
+O `ChartService` recebe resultados já processados e não recalcula as frequências.
 
 ---
 
 ### `table.py`
 
-Responsável por transformar uma `FrequencyDistribution` em um `DataFrame` apropriado para apresentação.
+Responsável por transformar uma `FrequencyDistribution` em um `DataFrame` adequado para apresentação.
 
-Também realiza a formatação das frequências relativas em porcentagem e dos intervalos das classes.
+Também realiza:
+
+- formatação dos intervalos;
+- formatação das frequências relativas em porcentagem;
+- diferenciação visual entre dados discretos e contínuos.
+
+---
+
+## ❌ Tratamento de erros
+
+A aplicação possui validações para situações como:
+
+### Entrada vazia
+
+```text
+""
+```
+
+### Campos vazios
+
+```text
+12, 15, , 20
+```
+
+### Valores não numéricos
+
+```text
+12, abc, 20
+```
+
+### Tipo de variável inválido
+
+Internamente, o sistema verifica se o tipo informado pertence às opções definidas em `TypeValues`.
+
+A escolha entre variável discreta e contínua é realizada pelo usuário com base na natureza dos dados, e não pela existência ou ausência de casas decimais.
+
+Os erros de entrada são apresentados de forma amigável na interface.
 
 ---
 
@@ -621,9 +719,9 @@ Com o ambiente virtual ativado:
 streamlit run app.py
 ```
 
-O Streamlit abrirá a aplicação no navegador.
+O Streamlit deverá abrir a aplicação no navegador.
 
-Caso não abra automaticamente, o terminal exibirá o endereço local da aplicação.
+Caso isso não aconteça automaticamente, o terminal exibirá o endereço local.
 
 Normalmente:
 
@@ -643,18 +741,14 @@ pytest
 
 O projeto possui testes automatizados para as principais regras relacionadas a:
 
-- criação de classes;
+- construção de classes;
 - distribuição de frequência;
 - dados discretos;
 - dados contínuos;
-- limites das classes;
-- serviço de distribuição.
+- limites dos intervalos;
+- orquestração da distribuição.
 
-No estado atual do projeto:
-
-```text
-10 testes passando
-```
+A suíte de testes deve ser executada antes da integração de novas alterações à `main`.
 
 ---
 
@@ -674,30 +768,16 @@ Digite:
 2, 3, 2, 5, 3, 2, 4, 5, 3, 2
 ```
 
-O sistema deverá gerar os valores:
+Resultado esperado:
 
 ```text
-2
-3
-4
-5
+Valor 2 → fi = 4
+Valor 3 → fi = 3
+Valor 4 → fi = 1
+Valor 5 → fi = 2
 ```
 
-com frequências absolutas:
-
-```text
-4
-3
-1
-2
-```
-
-Além disso, deverá apresentar:
-
-- tabela de frequência;
-- frequências relativas;
-- frequências acumuladas;
-- gráfico de barras.
+Além da tabela, deverá ser apresentado um gráfico de barras.
 
 ---
 
@@ -719,55 +799,28 @@ O sistema deverá:
 
 - criar automaticamente as classes;
 - calcular os pontos médios;
-- gerar a distribuição de frequência;
+- calcular as frequências;
+- apresentar a tabela;
 - apresentar o histograma;
 - apresentar o polígono de frequência.
 
 ---
 
-## ❌ Tratamento de erros
+## 🌿 Git e organização do desenvolvimento
 
-A aplicação possui validações para situações como:
+O projeto utiliza Git e GitHub para controle de versão e desenvolvimento colaborativo.
 
-### Entrada vazia
-
-```text
-""
-```
-
-### Campos vazios
+A branch:
 
 ```text
-12, 15, , 20
+main
 ```
 
-### Valores não numéricos
+representa a versão estável do projeto.
 
-```text
-12, abc, 20
-```
+Novas funcionalidades e alterações foram desenvolvidas em branches separadas.
 
-### Valor incompatível com variável discreta
-
-Exemplo:
-
-```text
-1, 2.5, 3
-```
-
-quando o tipo selecionado é discreto.
-
-O sistema apresenta mensagens amigáveis para o usuário em vez de interromper a aplicação.
-
----
-
-## 🌿 Git e organização da equipe
-
-O desenvolvimento foi realizado utilizando Git e GitHub.
-
-Foi adotado um fluxo baseado em branches.
-
-Algumas branches utilizadas durante o desenvolvimento:
+Exemplos utilizados durante o desenvolvimento:
 
 ```text
 feat/tabela-frequencia
@@ -776,29 +829,31 @@ feat/interface-streamlit
 refactor/frequency-service
 refactor/frequency-table
 refactor/interface-streamlit
+fix/variable-type-validation
+refactor/app-structure
 ```
 
-A branch `main` foi utilizada como versão estável do projeto.
+Fluxo adotado:
 
-Novas funcionalidades foram desenvolvidas em branches separadas, revisadas e posteriormente integradas à `main`.
+```text
+main
+ ↓
+feature / fix / refactor
+ ↓
+desenvolvimento
+ ↓
+testes
+ ↓
+revisão
+ ↓
+merge na main
+```
 
 ---
 
 ## 📝 Padrão de commits
 
-O projeto adotou mensagens de commit inspiradas em **Conventional Commits**.
-
-Exemplos:
-
-```text
-feat: adiciona DistributionService
-feat: adiciona componente de tabela
-refactor: aprimora componente de tabela
-refactor: modela classes de frequência contínuas
-fix: corrige representação dos intervalos
-test: adiciona testes de distribuição
-docs: atualiza documentação do projeto
-```
+O projeto utiliza mensagens inspiradas em **Conventional Commits**.
 
 Principais prefixos:
 
@@ -806,10 +861,21 @@ Principais prefixos:
 |---|---|
 | `feat` | nova funcionalidade |
 | `fix` | correção |
-| `refactor` | reorganização sem alteração da funcionalidade |
+| `refactor` | reorganização sem alterar a funcionalidade |
 | `test` | testes |
 | `docs` | documentação |
-| `chore` | tarefas de manutenção |
+| `chore` | manutenção |
+
+Exemplos:
+
+```text
+feat: adiciona DistributionService
+feat: adiciona componente de tabela
+refactor: modela classes de frequência contínuas
+refactor: reorganiza estrutura da aplicação
+fix: corrige validação do tipo de variável
+docs: atualiza documentação da arquitetura
+```
 
 ---
 
@@ -817,17 +883,19 @@ Principais prefixos:
 
 ### Separação entre parsing e validação
 
-O `DataParser` interpreta a entrada textual.
+O `DataParser` é responsável por interpretar a entrada textual.
 
-O `DataValidator` valida os dados já convertidos.
+O `DataValidator` é responsável por validar os dados já convertidos.
+
+Isso evita misturar transformação de dados com regras de validação.
 
 ---
 
-### Separação entre estatística e interface
+### Separação entre Estatística e interface
 
-Os cálculos estatísticos não dependem do Streamlit.
+As regras estatísticas não dependem do Streamlit.
 
-Isso permite que as regras sejam testadas de forma independente da interface.
+Isso permite testar o processamento de forma independente da interface.
 
 ---
 
@@ -837,11 +905,21 @@ O `ClassService` é responsável pela criação das classes.
 
 O `FrequencyService` é responsável pelos cálculos de frequência.
 
-O `DistributionService` coordena o fluxo entre esses serviços.
+O `DistributionService` coordena esses serviços.
 
 ---
 
-### Representação diferente para dados discretos e contínuos
+### O tipo estatístico não é inferido pelo tipo numérico
+
+Inicialmente, valores discretos eram restringidos a números inteiros.
+
+Essa regra foi revisada porque, estatisticamente, a presença de casas decimais não determina por si só se uma variável é discreta ou contínua.
+
+Por isso, a aplicação passou a utilizar a classificação fornecida pelo usuário de acordo com a natureza da variável.
+
+---
+
+### Representações diferentes para dados discretos e contínuos
 
 Dados discretos utilizam:
 
@@ -855,13 +933,13 @@ Dados contínuos utilizam:
 ContinuousFrequencyRow
 ```
 
-Isso evita campos opcionais desnecessários e torna os modelos mais claros.
+Essa separação mantém os modelos mais claros e evita campos opcionais desnecessários.
 
 ---
 
 ### Gráficos separados da regra estatística
 
-O `ChartService` recebe resultados já processados.
+O `ChartService` recebe resultados já calculados.
 
 Nenhuma frequência é recalculada durante a geração dos gráficos.
 
@@ -869,13 +947,28 @@ Nenhuma frequência é recalculada durante a geração dos gráficos.
 
 ### Apresentação da tabela separada da lógica principal
 
-A criação do `DataFrame` foi isolada em:
+A criação da tabela foi isolada em:
 
 ```text
 src/ui/components/table.py
 ```
 
-Assim, o `app.py` fica responsável principalmente pela orquestração da interface.
+Assim, o `app.py` não precisa montar manualmente os `DataFrames`.
+
+---
+
+### `main()` como função de orquestração
+
+O `app.py` foi refatorado para evitar uma função principal excessivamente grande.
+
+A função `main()` mantém apenas o fluxo geral da aplicação, enquanto tarefas de entrada, processamento e apresentação foram separadas em funções menores.
+
+Essa organização melhora:
+
+- legibilidade;
+- manutenção;
+- separação de responsabilidades;
+- compreensão do fluxo da aplicação.
 
 ---
 
@@ -887,12 +980,12 @@ Possíveis evoluções futuras incluem:
 
 - exportação das tabelas;
 - exportação dos gráficos;
-- personalização do número de classes;
-- escolha do método de determinação das classes;
+- personalização da quantidade de classes;
+- escolha de outros métodos para determinação das classes;
 - melhorias visuais na interface;
-- implantação da aplicação na nuvem;
-- novos tipos de visualização;
-- ampliação da cobertura de testes.
+- implantação pública da aplicação;
+- ampliação da cobertura de testes;
+- inclusão de novos tipos de visualização.
 
 Essas funcionalidades não fazem parte do escopo atual.
 
@@ -900,17 +993,20 @@ Essas funcionalidades não fazem parte do escopo atual.
 
 ## 📚 Contexto acadêmico
 
-Projeto desenvolvido para aplicação prática dos conceitos de:
+O projeto foi desenvolvido para aplicação prática dos conceitos de:
 
 - dados quantitativos;
 - variáveis discretas;
 - variáveis contínuas;
 - tabelas de frequência;
 - frequência absoluta;
-- frequência acumulada;
+- frequência absoluta acumulada;
 - frequência relativa;
 - frequência relativa acumulada;
 - distribuição em classes;
+- amplitude;
+- Regra de Sturges;
+- ponto médio;
 - histogramas;
 - polígonos de frequência.
 
