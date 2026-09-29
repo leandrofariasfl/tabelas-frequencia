@@ -7,6 +7,7 @@ from src.parsers.data_parser import DataParser
 from src.services.distribution_service import DistributionService
 from src.ui.components.table import create_frequency_dataframe
 from src.validators.data_validator import DataValidator
+from src.validators.type_consistency_checker import TypeConsistencyChecker
 
 
 def main():
@@ -32,6 +33,36 @@ def main():
         ("Discreta", "Contínua"),
     )
 
+    with st.expander("Como escolher o tipo da variável?"):
+        st.markdown(
+            """
+            **Variável discreta**
+
+            Representa valores contáveis ou pertencentes a um conjunto
+            específico de possibilidades.
+
+            Exemplos:
+            - número de filhos;
+            - quantidade de faltas;
+            - número de defeitos;
+            - valores definidos em uma escala.
+
+            **Variável contínua**
+
+            Representa valores obtidos por medição e que, em princípio,
+            podem assumir qualquer valor dentro de um intervalo.
+
+            Exemplos:
+            - altura;
+            - peso;
+            - temperatura;
+            - tempo.
+
+            **Importante:** possuir casas decimais não significa,
+            necessariamente, que uma variável seja contínua.
+            """
+        )
+
     if st.button("Processar Dados"):
         if not input_data.strip():
             st.warning(
@@ -47,6 +78,7 @@ def main():
 
         parser = DataParser()
         validator = DataValidator()
+        consistency_checker = TypeConsistencyChecker()
         distribution_service = DistributionService()
         chart_service = ChartService()
 
@@ -57,6 +89,20 @@ def main():
                 parsed_data,
                 type_val,
             )
+
+            consistency_result = consistency_checker.analyze(
+                parsed_data,
+                type_val,
+            )
+
+            if consistency_result:
+                level, message = consistency_result
+
+                if level == "warning":
+                    st.warning(message)
+
+                elif level == "info":
+                    st.info(message)
 
             dataset = Dataset(
                 values=parsed_data,
