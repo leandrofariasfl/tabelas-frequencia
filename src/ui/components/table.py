@@ -1,32 +1,43 @@
 import pandas as pd
 
-def create_frequency_dataframe(distribution, is_continuous: bool) -> pd.DataFrame:
-    """
-    Transforma o objeto FrequencyDistribution num DataFrame Pandas 
-    formatado para exibição.
-    """
+from src.enums.enums import TypeValues
+from src.models.frequency import FrequencyDistribution
+
+
+def create_frequency_dataframe(
+    distribution: FrequencyDistribution,
+    type_values: TypeValues,
+) -> pd.DataFrame:
     table_data = []
-    
-    for row in distribution.rows:
-        if is_continuous:
-            # Cria a string de intervalo (ex: 12 |-- 18)
-            interval_str = f"{row.lower_bound} |-- {row.upper_bound}"
-            
-            table_data.append({
-                "Intervalo": interval_str,
-                "Ponto médio": row.midpoint,
-                "fi": row.absolute_frequency,
-                "Fi": row.cumulative_frequency,
-                "fr": row.relative_frequency,
-                "Fr": row.cumulative_relative_frequency
-            })
+    last_index = len(distribution.rows) - 1
+
+    for index, row in enumerate(distribution.rows):
+        if type_values == TypeValues.CONTINUOUS:
+            if index == last_index:
+                interval = f"[{row.lower_bound}, {row.upper_bound}]"
+            else:
+                interval = f"[{row.lower_bound}, {row.upper_bound})"
+
+            table_data.append(
+                {
+                    "Intervalo": interval,
+                    "Ponto médio": row.midpoint,
+                    "fi": row.absolute_frequency,
+                    "Fi": row.cumulative_frequency,
+                    "fr": f"{row.relative_frequency:.2%}",
+                    "Fr": f"{row.cumulative_relative_frequency:.2%}",
+                }
+            )
+
         else:
-            table_data.append({
-                "Valor": row.value,
-                "fi": row.absolute_frequency,
-                "Fi": row.cumulative_frequency,
-                "fr": row.relative_frequency,
-                "Fr": row.cumulative_relative_frequency
-            })
-            
+            table_data.append(
+                {
+                    "Valor": row.value,
+                    "fi": row.absolute_frequency,
+                    "Fi": row.cumulative_frequency,
+                    "fr": f"{row.relative_frequency:.2%}",
+                    "Fr": f"{row.cumulative_relative_frequency:.2%}",
+                }
+            )
+
     return pd.DataFrame(table_data)
